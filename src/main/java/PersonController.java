@@ -1,40 +1,47 @@
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/people")
 public class PersonController {
+
 
     @Autowired
     PersonRepository personRepository;
 
-    @PostMapping("/people")
-    public Person createPerson(@RequestBody Person p) {
-        return personRepository.save(p);
+    @PostMapping
+    public ResponseEntity<Person> createPerson(@RequestBody Person p) {
+        return new ResponseEntity<>(personRepository.save(p), HttpStatus.CREATED);
     }
 
-//    @GetMapping("/people/{id}")
-//    public Person getPerson(@PathVariable("id") Long id) {
-//        return personRepository.findOne(id);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> getPerson(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(personRepository.findById(id).get(), HttpStatus.FOUND);
+    }
 
-//    @GetMapping("/people")
-//    public List<Person> getPersonList(List<Person> personList) {
-//        List<Person> people = new ArrayList<>(personList);
-//        return personRepository.findAll(people);
-//    }
-//
-//    @PutMapping("/people/{id}")
-//    public Person updatePerson(@PathVariable("id") Long id) {
-//        Person p = personRepository.findOne(id);
-//        return personRepository.save(p);
-//    }
+    @GetMapping
+    public ResponseEntity<List<Person>> getPersonList(List<Long> ids) {
+        return new ResponseEntity<>((List<Person>) personRepository.findAll(), HttpStatus.FOUND);
+    }
 
-    @DeleteMapping("/people/{id}")
-    public void DeletePerson(@PathVariable("id") Long id) {
-        personRepository.delete(personRepository.findById(id));
+    @PutMapping("/{id}")
+    public ResponseEntity<Person> updatePerson(@PathVariable("id") Long id, String firstName, String lastName) {
+       Person p = new Person(firstName, lastName, id);
+        if (personRepository.existsById(id)) {
+           return new ResponseEntity<>(personRepository.save(p), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(personRepository.save(p), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> DeletePerson(@PathVariable("id") Long id) {
+        personRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
