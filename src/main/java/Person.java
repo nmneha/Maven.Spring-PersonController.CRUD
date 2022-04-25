@@ -8,6 +8,12 @@ import javax.persistence.Id;
 
 @Entity
 public class Person {
+    private String firstName;
+    private String lastName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     public Person() {
     }
 
@@ -25,12 +31,5 @@ public class Person {
         this.lastName = lastName;
     }
 
-    private String firstName;
-    private String lastName;
-
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
 }

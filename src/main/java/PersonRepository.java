@@ -6,5 +6,4 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     void delete(Optional<Person> byId);
 
-    void delete(Long id);
 }
